@@ -12,9 +12,7 @@ export const errorHandler = (
       success: false,
       message: err.message,
     };
-
     if (err.details) body.details = err.details;
-
     res.status(err.statusCode).json(body);
     return;
   }

@@ -12,7 +12,6 @@ export const getUser = async (id: number) => {
       id,
     },
   });
-
   return data;
 };
 
@@ -24,7 +23,6 @@ export const createUser = async (userData: {
   const data = await prisma.user.create({
     data: userData,
   });
-
   return data;
 };
 

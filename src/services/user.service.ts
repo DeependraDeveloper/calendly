@@ -16,13 +16,8 @@ export const findAllUsers = async () => {
 
 export const findUserById = async (id: number) => {
     const data = await getUser(id);
-
-    if (!data) {
-      throw notFound("User not found");
-    }
-
+    if (!data) throw notFound("User not found");
     return data;
-
 };
 
 export const addUser = async (userData: {
