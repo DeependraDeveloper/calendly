@@ -10,7 +10,7 @@
 - contains types for corresponding packages
 - tsx - typescript execute to executes code directly
 - tsc - typecript complier while production we will transpile means converting one language to another language [ts-js]
-- npx - runs/execute a package/comamnds
+- npx - runs/execute a package in cli , ex: npx primsa  migrate dev
 
 # npm i -D prisma @types/node
 
@@ -85,3 +85,27 @@ export [per terminal session]
 - pqsql - pgadmin
 - mongodb - mongodb compass
 
+# Migrations
+  - MEANS our databses will be continously evolving , like adding more tables or updating tables or modifying tables or deleting tables
+  - project should apdat the change , like other developers and in production aslo , not just locally in your machine
+  - versionize it , like github same we need do to db and for everthing we need .
+  - so that we can roll back also+
+
+# advatanges of migrations
+  - visualize db changes as code
+  - track these changes by git
+  - get latest version of table 
+  - create new table if not exists
+  - in a team , after a pull the migration framework will check as they will have table for version control of tables and the above changes and roll back option by figuring out the opposite of a change
+  ex : added a column - remove the column = rollback
+
+# migrate 
+  - npx prisma migrate dev add_users_table
+
+# npx prisma generate 
+  - 
+
+# npm i pg
+# npm i -D @types/pg
+
+# npm i zod
