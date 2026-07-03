@@ -1,17 +1,51 @@
 // Repository for user-related database operations
 import { prisma } from "../config/db.js";
 
-export const users = async () => {
+export const getUsers = async () => {
   let data = await prisma.user.findMany();
   return data;
 };
 
-export const user = async (id: number) => {
+export const getUser = async (id: number) => {
   let data = await prisma.user.findUnique({
     where: {
       id,
     },
   });
 
+  return data;
+};
+
+export const createUser = async (userData: {
+  name: string;
+  email: string;
+  password: string;
+}) => {
+  const data = await prisma.user.create({
+    data: userData,
+  });
+
+  return data;
+};
+
+export const updateUser = async (
+  id: number,
+  userData: { name?: string; email?: string; password?: string },
+) => {
+  const data = await prisma.user.update({
+    where: {
+      id,
+    },
+    data: userData,
+  });
+  return data;
+};
+
+export const deleteUser = async (id: number) => {
+  const data = await prisma.user.delete({
+    where: {
+      id,
+    },
+  });
   return data;
 };
