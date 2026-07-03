@@ -2,40 +2,42 @@
 
 import { CreateUserDto } from "../dtos/user.dto.js";
 import {
-  getUsers,
-  getUser,
-  createUser,
-  updateUser,
-  deleteUser,
+ findAll,
+ findByEmail,
+ findOne,
+ insert,
+ update,
+ remove
 } from "../repositories/user.repository.js";
-import { notFound } from "../utilities/api-error.js";
+import {  conflict, notFound } from "../utilities/api-error.js";
 
 export const findAllUsers = async () => {
-  const data = await getUsers();
+  const data = await findAll();
   return data;
 };
 
 export const findUserById = async (id: number) => {
-    const data = await getUser(id);
-    if (!data) throw notFound("User not found");
-    return data;
+  const data = await findOne(id);
+  if (!data) throw notFound("User not found");
+  return data;
 };
 
 export const addUser = async (userData: CreateUserDto) => {
-    console.log("User data received in service:", userData); // Debugging log
-  const data = await createUser(userData);
+  const existingUser = await findByEmail(userData.email);
+  if (existingUser) throw conflict("User with this email already exists");
+  const data = await insert(userData);
   return data;
 };
 
 export const modifyUser = async (
   id: number,
-  userData: { name?: string; email?: string; password?: string },
+  userData: CreateUserDto,
 ) => {
-  const data = await updateUser(id, userData);
+  const data = await update(id, userData);
   return data;
 };
 
 export const removeUser = async (id: number) => {
-  const data = await deleteUser(id);
+  const data = await remove(id);
   return data;
 };

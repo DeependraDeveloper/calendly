@@ -15,7 +15,6 @@ export const getAllUsers = async (_req: Request, res: Response) => {
 };
 
 export const getUserById = async (req: Request, res: Response) => {
-  // Cast req.params.id explicitly to string to avoid TypeScript errors or else it could be undefined or any type. Then parse it to an integer.
   const { id } = req.params;
 
   const data = await findUserById(Number(id));
@@ -25,8 +24,6 @@ export const getUserById = async (req: Request, res: Response) => {
 
 export const createUser = async (req: Request, res: Response) => {
   const userData = req.body;
-
-  console.log("User data received in controller:", userData); 
 
   const data = await addUser(userData);
 
