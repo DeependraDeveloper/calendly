@@ -194,7 +194,8 @@ alernative (pull method)
  - created_at
  - updated_at
 
-repository
-service
-controller
-router
+router [routing req] - controller [http logic] - service [businees logic]-  repository [db logic]
+
+- Single Responsible principle
+  [ S O L I D] fundamentals
+  
