@@ -1,5 +1,6 @@
 // Service for user-related business logic
 
+import { CreateUserDto } from "../dtos/user.dto.js";
 import {
   getUsers,
   getUser,
@@ -20,11 +21,8 @@ export const findUserById = async (id: number) => {
     return data;
 };
 
-export const addUser = async (userData: {
-  name: string;
-  email: string;
-  password: string;
-}) => {
+export const addUser = async (userData: CreateUserDto) => {
+    console.log("User data received in service:", userData); // Debugging log
   const data = await createUser(userData);
   return data;
 };

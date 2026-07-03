@@ -116,3 +116,25 @@ export [per terminal session]
  - req.body | url encoded | form data
  - path params
  - query params
+
+# Zod will help in validate data and also produces types for js/ts
+ - If we reecive / send some payload we need represent in valid type definition
+
+# DTO [DATA TRANSFER OBJECT]
+ - type definitions have a specific usecase we keep in seperate layer called dto
+ ex: class/interface/type
+
+# Problem If we have mobile and web client 
+  - we can share small payload form mobile as bandwidth issue
+  - what if mob and web wants differents repsonses
+  - for web we can 
+  - so we can use 2 different version of api or brute force means client type
+
+2 solutions for this condition
+  * [backend for fronend | midle-end] bff
+     - client - midle server - actual backend
+     - q1,q2,q3 [give what necessary propertie required]  -  api 1
+  * [graphql] - cleint send query what they want, now do not need different servers or different apis
+
+
+# route - validate middleware - controller

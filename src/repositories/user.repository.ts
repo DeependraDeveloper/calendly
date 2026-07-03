@@ -1,5 +1,6 @@
 // Repository for user-related database operations
 import { prisma } from "../config/db.js";
+import { CreateUserDto } from "../dtos/user.dto.js";
 
 export const getUsers = async () => {
   let data = await prisma.user.findMany();
@@ -15,11 +16,18 @@ export const getUser = async (id: number) => {
   return data;
 };
 
-export const createUser = async (userData: {
-  name: string;
-  email: string;
-  password: string;
-}) => {
+export const createUser = async (userData:CreateUserDto) => {
+  console.log("User data received in repository:", userData); 
+
+
+  // const isEmailTaken = await prisma.user.findUnique({
+  //   where: {
+  //     email: userData.email,
+  //   },
+  // });
+
+  // if (isEmailTaken) throw new Error("Email is already taken");
+
   const data = await prisma.user.create({
     data: userData,
   });
