@@ -104,6 +104,9 @@ export [per terminal session]
 
 - after changing in schema or model run both migrate and generate commands
 
+# format prisma chema 
+  - npx prisma format
+
 # Seeding
   - mechanism by which you add some sample data to start working with it
   - seeders script / prisma seed
@@ -138,3 +141,35 @@ export [per terminal session]
 
 
 # route - validate middleware - controller
+
+# 3 kind project repo
+ - monolith 
+   - ecommerce with all service as a single unit
+
+   * disadvantages
+   - problem 1. during sale, catalog or payment traffic will increase here whole server need to increase its scaling which is unecessary for other services
+   - problem 2. lot conflict , compile/build time , too much code
+
+   * advantage
+     - simple
+     - code reuse
+     - single deployment
+
+ - monorepo [hybrid]
+   - ecommerce , single repo but every service inside is a seperate running server + separte deployable unit , [tingting]
+
+  * disadavantages
+    - extreamly big repo
+
+ - microservice
+   - ecommerce with different services and can be with d/f db and langauges
+
+   * disadvantages
+    - need communication overhead 
+    - shared libs
+    - distribution system , data inconsistency 
+
+   * advantages
+     - language independent , use py for ai/al , js for backend etc
+     - scale independently
+

@@ -13,14 +13,38 @@ datasource db {
   provider = "postgresql"
 }
 
-
-model User{
-  id Int @id @default(autoincrement())
-  name String
-  email String @unique
-  password String
-  createdAt DateTime @default(now())
+model User {
+  id        Int       @id @default(autoincrement())
+  name      String
+  email     String    @unique
+  password  String
+  createdAt DateTime  @default(now())
   updatedAt DateTime?
+
+  eventTypes EventType[]
 
   @@map("users")
 }
+
+// booking event
+// A user has many event types, and an event type belongs to a user (the host).
+model EventType {
+  id                  Int       @id @default(autoincrement())
+  hostId              Int
+  title               String
+  description         String?
+  durationMinutes     Int
+  isActive            Boolean   @default(true)
+  locationType        String    @default("online")
+  locationValue       String? // meeting link or any address
+  bufferBeforeMinutes Int?      @default(0) // break time before the event starts
+  bufferAfterMinutes  Int?      @default(0) // break time after the event ends
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime?
+
+  host User @relation(fields: [hostId], references: [id], onDelete: Cascade)
+
+  @@map("event_types")
+}
+
+// cascade delete: when a user is deleted, all their event types will also be deleted. This is achieved by the `onDelete: Cascade` option in the relation definition between `User` and `EventType`.
