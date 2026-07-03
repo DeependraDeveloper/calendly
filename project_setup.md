@@ -107,3 +107,12 @@ export [per terminal session]
 # Seeding
   - mechanism by which you add some sample data to start working with it
   - seeders script / prisma seed
+
+# Serilization : process of converting plain object to json like string format
+# Desrilization : process of converting json into plain object
+
+
+# 3 ways to send data in rest conversions
+ - req.body | url encoded | form data
+ - path params
+ - query params
