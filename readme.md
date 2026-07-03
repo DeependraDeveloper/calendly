@@ -194,3 +194,7 @@ alernative (pull method)
  - created_at
  - updated_at
 
+repository
+service
+controller
+router

@@ -3,21 +3,22 @@
 # npm init -y || pnpm init -y
 - use pnpm for fater installs and less disk space
 
-# npm i express zod dotenv 
+# npm i express zod dotenv pg
 - zod to type validations
 
-# npm i -D typescript tsx @types/express @types/node nodemon
+# npm i -D typescript tsx @types/express @types/node  @types/pg nodemon
 - contains types for corresponding packages
 - tsx - typescript execute to executes code directly
 - tsc - typecript complier while production we will transpile means converting one language to another language [ts-js]
 - npx - runs/execute a package in cli , ex: npx primsa  migrate dev
 
-# npm i -D prisma @types/node
 
 # npm i @prisma/client @prisma/adapter-pg
 - prisma - The Prisma CLI for running commands like prisma init, prisma migrate, and prisma generate
 - @prisma/client - The Prisma Client library for querying your database
 - @prisma/adapter-pg - The node-postgres driver adapter that connects Prisma Client to your database
+
+# npm i -D prisma @types/node
 
 # npx prisma init --output ../generated/prisma
   - initilize
@@ -25,8 +26,6 @@
   - Creates a .env file in the root directory for environment variables
   - Generates the Prisma Client in the generated/prisma/ directory
   - Creates a prisma.config.ts file for Prisma configuration
-
-# connecting prisma with existing db
 
 
 # 2 ways to eexceute typescript code
@@ -42,8 +41,6 @@
  - Instructs the TypeScript compiler (tsc) exactly how to compile your TypeScript code into standard JavaScript code
 
 # tpye = "module" as es moduling enbales
-
-
 # nodenext , will allow to use .js import , while complilation and while importing in code also
 
 - setting up env variables in linux/mac is different than windows
@@ -103,9 +100,10 @@ export [per terminal session]
   - npx prisma migrate dev add_users_table
 
 # npx prisma generate 
-  - 
+  - command that reads your schema.prisma file and builds a custom, type-safe database client specifically tailored to your database structure
 
-# npm i pg
-# npm i -D @types/pg
+- after changing in schema or model run both migrate and generate commands
 
-# npm i zod
+# Seeding
+  - mechanism by which you add some sample data to start working with it
+  - seeders script / prisma seed
