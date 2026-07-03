@@ -1,15 +1,15 @@
 // Service for user-related business logic
 
-import { CreateUserDto } from "../dtos/user.dto.js";
+import { CreateUserDto, UpdateUserDto } from "../dtos/user.dto.js";
 import {
- findAll,
- findByEmail,
- findOne,
- insert,
- update,
- remove
+  findAll,
+  findByEmail,
+  findOne,
+  insert,
+  update,
+  remove,
 } from "../repositories/user.repository.js";
-import {  conflict, notFound } from "../utilities/api-error.js";
+import { conflict, notFound } from "../utilities/api-error.js";
 
 export const findAllUsers = async () => {
   const data = await findAll();
@@ -29,15 +29,23 @@ export const addUser = async (userData: CreateUserDto) => {
   return data;
 };
 
-export const modifyUser = async (
-  id: number,
-  userData: CreateUserDto,
-) => {
+export const modifyUser = async (id: number, userData: UpdateUserDto) => {
+  const isUserExist = await findOne(id);
+  if (!isUserExist) throw notFound("User not found");
+
+  if(userData.email && userData.email !== isUserExist.email) {
+    const existingUser = await findByEmail(userData.email);
+    if (existingUser) throw conflict("User with this email already exists");
+  }
+
   const data = await update(id, userData);
   return data;
 };
 
 export const removeUser = async (id: number) => {
+  const isUserExist = await findOne(id);
+  if (!isUserExist) throw notFound("User not found");
+
   const data = await remove(id);
   return data;
 };

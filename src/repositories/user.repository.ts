@@ -1,6 +1,6 @@
 // Repository for user-related database operations
 import { prisma } from "../config/db.js";
-import { CreateUserDto } from "../dtos/user.dto.js";
+import { CreateUserDto, UpdateUserDto } from "../dtos/user.dto.js";
 
 export const findAll = async () => {
   let data = await prisma.user.findMany();
@@ -32,7 +32,7 @@ export const insert = async (userData: CreateUserDto) => {
   return data;
 };
 
-export const update = async (id: number, userData: CreateUserDto) => {
+export const update = async (id: number, userData: UpdateUserDto) => {
   const data = await prisma.user.update({
     where: {
       id,
