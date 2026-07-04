@@ -15,9 +15,7 @@ export const getAllUsers = async (_req: Request, res: Response) => {
 };
 
 export const getUserById = async (req: Request, res: Response) => {
-  const { id } = req.params;
-
-  const data = await findUserById(Number(id));
+  const data = await findUserById(req.userId);
 
   sendSuccess(res, data, 200, "User found successfully");
 };
@@ -31,18 +29,15 @@ export const createUser = async (req: Request, res: Response) => {
 };
 
 export const updateUser = async (req: Request, res: Response) => {
-  const { id } = req.params;
   const userData = req.body;
 
-  const data = await modifyUser(Number(id), userData);
+  const data = await modifyUser(req.userId, userData);
 
   sendSuccess(res, data, 200, "User updated successfully");
 };
 
 export const deleteUser = async (req: Request, res: Response) => {
-  const { id } = req.params;
-
-  const data = await removeUser(Number(id));
+  const data = await removeUser(req.userId);
 
   sendSuccess(res, data, 200, "User deleted successfully");
 };

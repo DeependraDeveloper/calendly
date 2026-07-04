@@ -25,8 +25,8 @@ export const findUserById = async (id: number) => {
 export const addUser = async (userData: CreateUserDto) => {
   const existingUser = await findByEmail(userData.email);
   if (existingUser) throw conflict("User with this email already exists");
-  const data = await insert(userData);
-  return data;
+  
+  return insert(userData);
 };
 
 export const modifyUser = async (id: number, userData: UpdateUserDto) => {
@@ -38,14 +38,13 @@ export const modifyUser = async (id: number, userData: UpdateUserDto) => {
     if (existingUser) throw conflict("User with this email already exists");
   }
 
-  const data = await update(id, userData);
-  return data;
+ 
+  return update(id, userData);;
 };
 
 export const removeUser = async (id: number) => {
   const isUserExist = await findOne(id);
   if (!isUserExist) throw notFound("User not found");
 
-  const data = await remove(id);
-  return data;
+  return remove(id);
 };
