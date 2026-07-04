@@ -6,6 +6,8 @@ import {
   findAll,
   findByHostId,
   findEventTypeById,
+  findByHostIdAndSlug,
+  findBySlug,
   insert,
   remove,
   update,
@@ -27,11 +29,29 @@ export const findEventTypesByHostId = async (hostId: number) => {
   return data;
 };
 
-export const addEventType = async (hostId:number,eventDetials: CreateEventTypeDto) => {
+export const findEventTypesByHostIdAndSlug = async (
+  hostId: number,
+  slug: string,
+) => {
   const isHostExist = await findOne(hostId);
   if (!isHostExist) throw conflict("Host not found");
 
-  const data = await insert(hostId,eventDetials);
+  const isSlugExist = await findBySlug(slug);
+  if (!isSlugExist) throw conflict("Slug not found");
+
+  const data = await findByHostIdAndSlug(hostId, slug);
+
+  return data;
+};
+
+export const addEventType = async (
+  hostId: number,
+  eventDetials: CreateEventTypeDto,
+) => {
+  const isHostExist = await findOne(hostId);
+  if (!isHostExist) throw conflict("Host not found");
+
+  const data = await insert(hostId, eventDetials);
   return data;
 };
 

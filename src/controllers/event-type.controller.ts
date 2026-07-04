@@ -3,6 +3,7 @@ import {
   addEventType,
   findAllEventTypes,
   findEventTypesByHostId,
+  findEventTypesByHostIdAndSlug,
   modifyEventType,
   removeEventType,
 } from "../services/event-type.service.js";
@@ -25,6 +26,14 @@ export const getEventTypesByHostId = async (req: Request, res: Response) => {
   const data = await findEventTypesByHostId(Number(id));
   sendSuccess(res, data, 200, "Host EventTypes fetched successfully");
 };
+
+
+export const getEventTypesByHostIdAndSlug = async (req: Request, res: Response) => {
+  const { id , slug} = req.params;
+  const data = await findEventTypesByHostIdAndSlug(Number(id),slug.toString());
+  sendSuccess(res, data, 200, "Host EventTypes fetched successfully");
+};
+
 
 export const updateEventType = async (req: Request, res: Response) => {
   const { id } = req.params;
