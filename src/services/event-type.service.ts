@@ -1,3 +1,4 @@
+import slug from "slug";
 import {
   CreateEventTypeDto,
   UpdateEventTypeDto,
@@ -7,13 +8,14 @@ import {
   findByHostId,
   findEventTypeById,
   findByHostIdAndSlug,
+  slugExitsForHost,
   findBySlug,
   insert,
   remove,
   update,
 } from "../repositories/event-type.repository.js";
 import { findOne } from "../repositories/user.repository.js";
-import { conflict } from "../utilities/api-error.js";
+import { conflict, forbidden, notFound } from "../utilities/api-error.js";
 
 export const findAllEventTypes = async () => {
   const event_types = await findAll();
@@ -51,6 +53,13 @@ export const addEventType = async (
   const isHostExist = await findOne(hostId);
   if (!isHostExist) throw conflict("Host not found");
 
+  const slugInput = eventDetials.slug ?? slug(eventDetials.title,{lower:true});
+
+  if(!slugInput) throw conflict("Could not generated slug for the event");
+
+  const isSlugTaken = await slugExitsForHost(hostId , slugInput );
+  if(isSlugTaken) throw conflict("A event type with this slug already exists , please use a fifferent slug");
+
   const data = await insert(hostId, eventDetials);
   return data;
 };
@@ -66,9 +75,11 @@ export const modifyEventType = async (
   return data;
 };
 
-export const removeEventType = async (id: number) => {
+export const removeEventType = async (hostId:number,id: number) => {
   const isEventTypeExist = await findEventTypeById(id);
-  if (!isEventTypeExist) throw conflict("Event type not found");
+  if (!isEventTypeExist) throw notFound("Event type not found");
+
+  if(isEventTypeExist.hostId !== hostId) throw forbidden("Your are unauthorized");
   const data = await remove(id);
   return data;
 };

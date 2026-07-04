@@ -14,7 +14,7 @@ export const createEventTypeSchema = z.object({
     .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, {
       message:
         "Slug must contain only lowercase letters, numbers, and single hyphens, and cannot start or end with a hyphen",
-    }),
+    }).optional(),
   durationMinutes: z
     .number("Duration is required")
     .min(15)

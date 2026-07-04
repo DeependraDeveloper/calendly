@@ -20,6 +20,6 @@ eventTypeRouter.get("/:id", getEventTypesByHostId);
 eventTypeRouter.get("/:id/:slug", getEventTypesByHostIdAndSlug);
 eventTypeRouter.post("/:id", validate(createEventTypeSchema), createEventType);
 eventTypeRouter.patch("/:id", validate(updateEventTypeSchema), updateEventType);
-eventTypeRouter.delete("/:id", deleteEventType);
+eventTypeRouter.delete("/:hostId/:id", deleteEventType);
 
 export default eventTypeRouter;

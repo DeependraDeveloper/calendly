@@ -43,7 +43,7 @@ export const updateEventType = async (req: Request, res: Response) => {
 };
 
 export const deleteEventType = async (req: Request, res: Response) => {
-  const { id } = req.params;
-  const data = await removeEventType(Number(id));
+  const { hostId,id } = req.params;
+  const data = await removeEventType(Number(hostId),Number(id));
   sendSuccess(res, data, 200, "EventType deleted successfully");
 };

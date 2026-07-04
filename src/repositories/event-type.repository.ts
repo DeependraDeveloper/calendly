@@ -30,6 +30,17 @@ export async function findByHostIdAndSlug(hostId: number, slug: string) {
   });
   return data;
 }
+  
+
+export async function slugExitsForHost(hostId: number, slug: string) {
+  let data = await prisma.eventType.findFirst({
+    where: {
+      hostId,
+      slug,
+    },
+  });
+  return data !== null;
+}
 
 
 export const findBySlug = async(slug:string) =>{
@@ -41,6 +52,7 @@ export const findBySlug = async(slug:string) =>{
 
   return data
 }
+
 
 export const findEventTypeById = async (id: number) => {
   const data = await prisma.eventType.findUnique({
