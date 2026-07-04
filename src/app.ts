@@ -2,9 +2,12 @@ import express, { Express } from "express";
 
 const app: Express = express();
 
-import userRouter from "./routes/user.router.js";
 import { errorHandler } from "./middlewares/error-handler.js";
 import { routeNotFound } from "./middlewares/route-handler.js";
+
+import userRouter from "./routes/user.router.js";
+import eventTypeRouter from "./routes/event-type.router.js";
+import publicEventRouter  from "./routes/public-event.router.js";
 
 app.use("/health", (_req, res) => {
   res.json({
@@ -19,6 +22,8 @@ app.use(express.urlencoded({ extended: true }));
 
 // routes
 app.use("/api/v1/users", userRouter);
+app.use('/api/v1/event-types', eventTypeRouter);
+app.use('/api/v1/public', publicEventRouter);
 
 // route  middleware
 app.use(routeNotFound);

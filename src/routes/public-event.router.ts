@@ -1,6 +1,11 @@
 import { Router } from "express";
 import { getEventTypesByHostIdAndSlug } from "../controllers/event-type.controller.js";
 
-export const publicEventRouter: Router = Router();
+const publicEventRouter: Router = Router();
 
-publicEventRouter.get('/users/:userId/event-types/:slug', getEventTypesByHostIdAndSlug);
+publicEventRouter.get(
+  "/users/:userId/event-types/:slug",
+  getEventTypesByHostIdAndSlug,
+);
+
+export default publicEventRouter;

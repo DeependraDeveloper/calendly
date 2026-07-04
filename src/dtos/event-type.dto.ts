@@ -2,10 +2,7 @@ import { z } from "zod";
 
 export const createEventTypeSchema = z.object({
   title: z.string("Title is required").min(1).max(200).nonoptional(),
-  name: z
-    .string("Title is required")
-    .min(3, "Title must be at least 3 characters")
-    .max(50, "Title must be less than 50 characters"),
+ 
   description: z.string().min(1).max(1000).optional(),
   slug: z
     .string()

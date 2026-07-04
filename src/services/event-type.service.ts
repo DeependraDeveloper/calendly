@@ -13,7 +13,7 @@ import {
   update,
 } from "../repositories/event-type.repository.js";
 import { findOne } from "../repositories/user.repository.js";
-import { conflict, forbidden, notFound } from "../utilities/api-error.js";
+import { badRequest, conflict, forbidden, notFound } from "../utilities/api-error.js";
 
 export const findEventTypesByHostId = async (hostId: number) => {
   const isHostExist = await findOne(hostId);
@@ -92,6 +92,10 @@ export const getEventTypeById = async (id: number, hostId: number) => {
 };
 
 export const getEventTypePublic = async (hostId: number, eventSlug: string) => {
+
+  if(!hostId) throw badRequest("Host is required");
+  if(!eventSlug) throw badRequest("slug is required");
+
   const isHostExist = await findOne(hostId);
   if (!isHostExist) throw conflict("Host not found");
 

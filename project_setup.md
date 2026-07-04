@@ -204,3 +204,6 @@ export [per terminal session]
     - Seo
     - human readly
     -  security
+
+# load testing tool Grafana k6 | bombardier
+

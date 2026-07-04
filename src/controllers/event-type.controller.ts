@@ -43,7 +43,7 @@ export const getEventTypesByHostIdAndSlug = async (
   req: Request,
   res: Response,
 ) => {
-  const { id, slug } = req.params;
-  const data = await getEventTypePublic(Number(id), String(slug));
+  const { userId, slug } = req.params;
+  const data = await getEventTypePublic(Number(userId), String(slug));
   sendSuccess(res, data, 200, "Host EventTypes fetched successfully");
 };

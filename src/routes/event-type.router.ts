@@ -18,10 +18,10 @@ const eventTypeRouter: Router = Router();
 
 eventTypeRouter.use(userAuth);
 
-eventTypeRouter.get("/", getAllEventTypes);
-eventTypeRouter.get("/:id", getEventTypesByHostId);
-eventTypeRouter.post("/:id", validate(createEventTypeSchema), createEventType);
-eventTypeRouter.patch("/:id", validate(updateEventTypeSchema), updateEventType);
-eventTypeRouter.delete("/:id", deleteEventType);
+eventTypeRouter.get("/all", getAllEventTypes);
+eventTypeRouter.get("/", getEventTypesByHostId);
+eventTypeRouter.post("/", validate(createEventTypeSchema), createEventType);
+eventTypeRouter.patch("/", validate(updateEventTypeSchema), updateEventType);
+eventTypeRouter.delete("/", deleteEventType);
 
 export default eventTypeRouter;
