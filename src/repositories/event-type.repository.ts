@@ -2,23 +2,34 @@ import { prisma } from "../config/db.js";
 import {
   CreateEventTypeDto,
   UpdateEventTypeDto,
-} from "../dtos/eventType.dto.js";
+} from "../dtos/event-type.dto.js";
 
-// crud for event_types
-
-export const findAll = async () => {
+export async function findAll() {
   let event_types = await prisma.eventType.findMany();
   return event_types;
-};
+}
 
-export const findByHostId = async (hostId: number) => {
+export async function findByHostId(hostId: number) {
   let data = await prisma.eventType.findMany({
     where: {
       hostId,
     },
+    orderBy: {
+      createdAt: "desc",
+    },
   });
   return data;
-};
+}
+
+export async function findByHostIdAndsLUG(hostId: number, slug: string) {
+  let data = await prisma.eventType.findFirst({
+    where: {
+      hostId,
+      slug,
+    },
+  });
+  return data;
+}
 
 export const findEventTypeById = async (id: number) => {
   const data = await prisma.eventType.findUnique({
@@ -29,9 +40,15 @@ export const findEventTypeById = async (id: number) => {
   return data;
 };
 
-export const insert = async (eventDetials: CreateEventTypeDto) => {
+export const insert = async (
+  hostId: number,
+  eventDetials: CreateEventTypeDto,
+) => {
   let data = await prisma.eventType.create({
-    data: eventDetials,
+    data: {
+      ...eventDetials,
+      hostId,
+    },
   });
 
   return data;

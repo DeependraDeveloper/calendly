@@ -5,7 +5,7 @@ import {
   findEventTypesByHostId,
   modifyEventType,
   removeEventType,
-} from "../services/eventType.service.js";
+} from "../services/event-type.service.js";
 import { sendSuccess } from "../utilities/api-response.js";
 
 export const getAllEventTypes = async (_req: Request, res: Response) => {
@@ -15,7 +15,8 @@ export const getAllEventTypes = async (_req: Request, res: Response) => {
 
 export const createEventType = async (req: Request, res: Response) => {
   const eventType = req.body;
-  const data = await addEventType(eventType);
+  const {id} = req.params;
+  const data = await addEventType(Number(id),eventType);
   sendSuccess(res, data, 201, "EventTypes created successfully");
 };
 

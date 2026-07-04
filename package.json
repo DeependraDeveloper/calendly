@@ -10,7 +10,8 @@
     "build": "tsc",
     "prisma:format": "prisma format",
     "prisma:migrate": "prisma migrate dev",
-    "prisma:generate": "prisma generate"
+    "prisma:generate": "prisma generate",
+    "prisma:all": "npm run prisma:format && npm run prisma:migrate && npm run prisma:generate"
   },
   "keywords": [],
   "author": "",

@@ -1,7 +1,7 @@
 import {
   CreateEventTypeDto,
   UpdateEventTypeDto,
-} from "../dtos/eventType.dto.js";
+} from "../dtos/event-type.dto.js";
 import {
   findAll,
   findByHostId,
@@ -9,7 +9,7 @@ import {
   insert,
   remove,
   update,
-} from "../repositories/eventType.repository.js";
+} from "../repositories/event-type.repository.js";
 import { findOne } from "../repositories/user.repository.js";
 import { conflict } from "../utilities/api-error.js";
 
@@ -27,11 +27,11 @@ export const findEventTypesByHostId = async (hostId: number) => {
   return data;
 };
 
-export const addEventType = async (eventDetials: CreateEventTypeDto) => {
-  const isHostExist = await findOne(eventDetials.hostId);
+export const addEventType = async (hostId:number,eventDetials: CreateEventTypeDto) => {
+  const isHostExist = await findOne(hostId);
   if (!isHostExist) throw conflict("Host not found");
 
-  const data = await insert(eventDetials);
+  const data = await insert(hostId,eventDetials);
   return data;
 };
 

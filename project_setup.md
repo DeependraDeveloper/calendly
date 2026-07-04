@@ -101,6 +101,7 @@ export [per terminal session]
 
 # npx prisma generate 
   - command that reads your schema.prisma file and builds a custom, type-safe database client specifically tailored to your database structure
+  -  this allows to prisma client to know the new chnages made in checma also
 
 - after changing in schema or model run both migrate and generate commands
 
@@ -173,3 +174,33 @@ export [per terminal session]
      - language independent , use py for ai/al , js for backend etc
      - scale independently
 
+# Send PR Fork - Clone - Create Branch - Push - Open PR
+# Send pr in single - single dont send all together
+
+
+# When to prefer caching and indexing [ both are mechanism to improve reads]
+ - cache brings new infra reuqirements like redis which is overhead to addon , but every project has a bare min db
+ - index create a write overhead , whenver write need a new index should be created
+ - range query might not be supported by caching key - value stores
+   IN THIS CASE B-TREE BASED INDEXES SUPPORT
+
+# LRU (Least Recently Used) and LFU (Least Frequently Used) are cache eviction algorithms used to manage memory when a cache reaches capacity
+
+- LRU: Evicts the item that has not been accessed for the longest time. ex: browser cache
+- LFU: Evicts the item that has the lowest total access count
+  ex: ecommerce
+- TTL : invalids cache data after a specific time frame given
+
+# indexes are storing in disk , copy in ram also
+
+
+# Slug 
+  - The mapping of unquie identifier of a resource to a club of english words
+  ex: /blogs/:id
+      /blogs/3
+      /blogs/how-do-llm-works83731
+
+  advantages
+    - Seo
+    - human readly
+    -  security
