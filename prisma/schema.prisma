@@ -13,16 +13,26 @@ datasource db {
   provider = "postgresql"
 }
 
+/**
+ * - USER table
+ * - a user is host here. B2C model like topmate
+ * - he can create a event or can join event
+ * - he can have availability rules | availability exception
+ * - he can have slots
+ * - he can have booking for a event in a particular slot
+ */
+
 model User {
   id        Int      @id @default(autoincrement())
   name      String
   email     String   @unique
-  slug      String?  @unique
+  slug      String?  @unique // e.g., topmate.io/deependra
   timezone  String   @default("UTC")
   password  String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  // A Creator owns their settings like what events they do , when are they avaible or that event and when not and bookings and slots they have for that event
   eventTypes             EventType[]
   availabilityRules      AvailabilityRule[]
   availabilityExceptions AvailabilityException[]
@@ -32,23 +42,40 @@ model User {
   @@map("users")
 }
 
-// booking event
-// A user has many event types, and an event type belongs to a user (the host).
+/**
+ * - // A user's eventtype
+ * user creates a eventype like [resume review]
+ * - with durations of 30 mins each
+ * - isActive whether the event is active or not
+ * - locationType [online | in-person | call etc]
+ * - location value [meeetingLinks , phone numbers , address]
+ * - bufferBeforeMin - break before the event
+ * - buffferAfterMin - break after the event
+ * slots    Slot[]
+ * bookings Booking[]
+ * event type belongs
+ * cascade delete - if user is deleted all his availability rule will be auto deleted
+ * this table has a foreign key hostId referring to user table
+ * Note : A user has many event types, and an event type belongs to a user (the host).
+ */
 model EventType {
   id                  Int      @id @default(autoincrement())
   hostId              Int
-  title               String
+  title               String //  "1:1 Mentorship", "Resume Review"
   description         String?
-  slug                String
+  slug                String // topmate.io/deependra/resume-review
   durationMinutes     Int
+  price               Int      @default(0) // price if appilcable
+  currency            String   @default("USD")
   isActive            Boolean  @default(true)
-  locationType        String   @default("online")
-  locationValue       String? // meeting link or any address
+  locationType        String   @default("online") // online, phone, physical
+  locationValue       String? // meeting link , call , any address
   bufferBeforeMinutes Int?     @default(0) // break time before the event starts
   bufferAfterMinutes  Int?     @default(0) // break time after the event ends
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt
-  host                User     @relation(fields: [hostId], references: [id], onDelete: Cascade)
+
+  host User @relation(fields: [hostId], references: [id], onDelete: Cascade)
 
   slots    Slot[]
   bookings Booking[]
@@ -59,12 +86,20 @@ model EventType {
 
 // cascade delete: when a user is deleted, all their event types will also be deleted. This is achieved by the `onDelete: Cascade` option in the relation definition between `User` and `EventType`.
 
+/**
+ * - // A user's availability
+ * user a is available on monday from 10:00 am to 5pm
+ * availabilityRules      AvailabilityRule[]
+ * means a user has many availabilty rules
+ * cascade delete - if user is deleted all his availability rule will be auto deleted
+ * this table has a foreign key userId referring to user table
+ */
 model AvailabilityRule {
   id        Int      @id @default(autoincrement())
   userId    Int
-  weekday   Int
-  startTime String
-  endTime   String
+  weekday   Int // 0 (Sunday) to 6 (Saturday)
+  startTime String //  "09:00"
+  endTime   String //  "17:00"
   timezone  String   @default("UTC")
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -75,13 +110,25 @@ model AvailabilityRule {
   @@map("availibility_rules")
 }
 
+/**
+ * - // A user's availability expection or holiday
+ * user a is unavailable on 5-7-2026 from 10 am to 1 pm
+ * can have a reason
+ * type - full  - doesn't need start and end time then
+ * - partial
+ * availabilityExceptions AvailabilityException[]
+ * means a user has many availabilty exception
+ * DateTime @db.Date only store date
+ * cascade delete - if user is deleted all his availability exception will be auto deleted
+ * this table has a foreign key userId referring to user table
+ */
 model AvailabilityException {
   id        Int      @id @default(autoincrement())
   userId    Int
-  date      DateTime @db.Date
-  type      String
-  startTime String?
-  endTime   String?
+  date      DateTime @db.Date // 2026-07-15
+  type      String // "FULL" (holiday) or "PARTIAL" (custom hours)
+  startTime String? // "13:00"  partial day
+  endTime   String? // "16:00" partial day 
   reason    String?
   timezone  String   @default("UTC")
   createdAt DateTime @default(now())
@@ -93,13 +140,23 @@ model AvailabilityException {
   @@map("availibility_exceptions")
 }
 
+/**
+ * - // A user's slot we will created by backend logic based on user availability rule and exception
+ * , with slot start and end time
+ * , status - available | unavailable
+ * bookings  Booking[]
+ * means a slot is deleted then the slot becomes avaible and booking gets deleted
+ * host & eventtype is also foriegn keys
+ * this table has a foreign key userId referring to user table
+ */
+
 model Slot {
   id          Int      @id @default(autoincrement())
   hostId      Int
   eventTypeId Int
-  startAt     DateTime
-  endAt       DateTime
-  status      String   @default("AVAILABLE")
+  startAt     DateTime // Absolute UTC Timestamp (Date + Time)
+  endAt       DateTime // Absolute UTC Timestamp (Date + Time)
+  status      String   @default("AVAILABLE") // AVAILABLE, LOCKED, BOOKED
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
@@ -113,27 +170,163 @@ model Slot {
   @@map("slots")
 }
 
+/**
+ * Booking belongs to guest user
+ * - event may be 1:1 resume review
+ * - a particular slot
+ * - email , notes , name of guest
+ * - status ('PENDING, CONFIRMED, CANCELLED')
+ * - link if online
+ * - calendar later fio
+ * - host
+ * have foriegn keys host , eventytpe , slot
+ */
+
 model Booking {
   id              Int       @id @default(autoincrement())
   hostId          Int
-  eventType       Int
-  slotId          Int
-  inviteeEmail    String
-  inviteeNotes    String
+  eventTypeId     Int
+  slotId          Int       @unique // Ensuring a slot can never be double-booked
+  inviteeEmail    String // guest email, name etc
+  inviteeNotes    String?
   inviteeName     String
-  status          String    @default("PENDING")
+  status          String    @default("PENDING") // PENDING, CONFIRMED, CANCELLED
   meetingLink     String?
   calendarEventId String?
   cancelledAt     DateTime?
+  paymentStatus   String    @default("UNPAID") // UNPAID, PAID, REFUNDED if paid model
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
 
-  host     User      @relation(fields: [hostId], references: [id], onDelete: Cascade)
-  evenType EventType @relation(fields: [eventType], references: [id], onDelete: Cascade)
-  slot     Slot      @relation(fields: [slotId], references: [id], onDelete: Cascade)
+  host      User      @relation(fields: [hostId], references: [id], onDelete: Cascade)
+  eventType EventType @relation(fields: [eventTypeId], references: [id], onDelete: Cascade)
+  slot      Slot      @relation(fields: [slotId], references: [id], onDelete: Cascade)
 
   @@index([status])
   @@index([inviteeEmail])
   @@index([hostId, createdAt])
   @@map("bookings")
 }
+
+/**
+ * Summary
+ * 1. User ➡️ EventType (One-to-Many)
+ * The Concept: A Topmate creator wants to sell different packages. They create a free "15-Min Quick Chat", a paid "1:1 Resume Review ($50)", and a "Text Query ($10)".
+ * The Relation: The User model points to an array of eventTypes. The EventType table has a hostId foreign key. If a creator deletes their account, all their service offerings are wiped out via onDelete: Cascade.
+ * 2. User ➡️ AvailabilityRule & AvailabilityException (One-to-Many)
+ * The Concept: Creators need control over when they are disturbable. The rules map their standard week (e.g., Mondays 6 PM - 9 PM after their day job). The exceptions handle things like vacations or sudden busy days.
+ * The Relation: These tables hold simple structural rules linked via userId. They don't represent specific dates on a calendar; they are templates used by your backend engine to compute open calendar slots.
+ * 3. EventType & User ➡️ Slot (One-to-Many)
+ * The Concept: When a guest clicks a creator's link, your backend reads the availability tables and dynamically generates an array of concrete calendar dates and times (e.g., July 13, 2026, at 14:00 PM UTC). These are your bookable assets.
+ * The Relation: A Slot belongs to a specific hostId and a specific eventTypeId. Why both? Because a 30-minute event creates different time slots than a 60-minute event, even on the exact same day!
+ * 4. Slot ➡️ Booking (One-to-One)
+ * The Concept: This is where the magic happens. A guest selects a generated slot and buys it.
+ * The Relation: Notice that slotId Int @unique in the Booking model, and booking Booking? in the Slot model. This creates a strict 1:1 relation. A slot can have zero bookings (available) or exactly one booking (taken). It is physically impossible for the database to allow two different people to book the exact same slot.
+ * User ➡️ Booking (One-to-Many)
+ * The Concept: The creator needs to see their incoming income streams and call schedule.
+ * The Relation: Booking maps directly to User via hostId. Notice there is no guest relation to the User table here. The guest's identity lives completely inside the raw strings guestName and guestEmail within that specific booking invoice.
+ * 🔄 The Pre-Generated Architecture: An End-to-End Story
+ * Stage A: The Creator Sets Up Shop
+ * Deependra signs up. A row is added to users (id: 42, slug: "deependra").
+ * Deependra creates a 60-minute service: "Portfolio Review" for $40. A row is added to event_types (id: 101, hostId: 42, durationMinutes: 60).
+ * Deependra sets availability for Saturdays 10:00 AM to 2:00 PM. A row goes into availability_rules (userId: 42, weekday: 6, startTime: "10:00", endTime: "14:00").
+ * Stage B: The Asynchronous Slot Generator (The Background Worker)
+ * Instead of waiting for a guest, an asynchronous event triggers the slot generation. This usually happens in two ways:
+ * Trigger 1 (Immediate): The moment Deependra hits "Save Availability", your Express app fires an async background event (using a worker pool like BullMQ or a simple setImmediate).
+ * Trigger 2 (The Routine Cron Job): Every night at midnight, a Cron Job wakes up to maintain a rolling 30-day window of available slots for all creators.
+ * What the Background Worker does behind the scenes:
+ * It looks at Deependra's availability_rules (Saturdays, 10 AM - 2 PM).
+ * It looks at the calendar and finds the next 4 Saturdays (e.g., July 11, July 18, July 25, and August 1).
+ * It breaks each Saturday down into 60-minute chunks based on the durationMinutes of event type 101.
+ * It bulk-inserts these directly into the slots table ahead of time.
+ * Stage C: The Guest Visits the Booking Page (Lightning Fast ⚡)
+ * Sarah (an unregistered guest) visits topmate.io/deependra/portfolio-review.
+ * No complex math needed: Your backend doesn't read availability rules, calculate loops, or handle timezone logic right now.
+ * The server fires a straightforward, indexed database query:
+ * const availableSlots = await prisma.slot.findMany({
+ * where: {
+ * eventTypeId: 101,
+ * status: "AVAILABLE",
+ * startAt: { gte: new Date() } // Only future slots
+ * }
+ * });
+ * Because the database is just fetching pre-existing rows, the page loads incredibly fast for Sarah. She instantly sees the grid of 4 open slots for July 11th.
+ * Stage D: Checkout & Instant Lock
+ * Sarah clicks the 11:00 AM to 12:00 PM slot (Slot 502) and types her billing info.
+ * Preventing Double Booking: To stop someone else from buying this exact slot while Sarah is typing her credit card details, your system uses an optimistic or pessimistic lock.
+ * The backend instantly updates Slot 502:
+ * await prisma.slot.update({
+ * where: { id: 502 },
+ * data: { status: "LOCKED" } // Locked for 10 minutes during payment
+ * });
+ * If another visitor refreshes Deependra's page right now, Slot 502 will not appear because its status is no longer AVAILABLE.
+ * Stage E: Successful Transaction
+ * Sarah completes her payment via Stripe.
+ * Stripe fires a secure webhook to your Express API saying: "Payment successful for Slot 502".
+ * The backend updates Slot 502 status from LOCKED to BOOKED.
+ * The system inserts a permanent record into the bookings table:
+ * {
+ * "id": 9001,
+ * "hostId": 42,
+ * "eventTypeId": 101,
+ * "slotId": 502,
+ * "guestName": "Sarah",
+ * "guestEmail": "sarah@example.com",
+ * "status": "CONFIRMED",
+ * "paymentStatus": "PAID"
+ * }
+ * A notification background task sends out the Google Meet coordinates and calendar files to both Deependra and Sarah.
+ * What happens if Deependra adds an "Exception" later?
+ * Since the slots are already sitting statically in your database, what happens if Deependra suddenly adds an AvailabilityException saying: "I am taking July 11th off"?
+ * Your async worker handles this beautifully:
+ * Deependra saves the exception for July 11th.
+ * An async event fires: handleExceptionCreated(userId: 42, date: "2026-07-11").
+ * The worker finds all slots for Deependra on that date that are still AVAILABLE and mass-deletes them or switches their status to UNAVAILABLE:
+ * await prisma.slot.updateMany({
+ * where: {
+ * hostId: 42,
+ * status: "AVAILABLE",
+ * startAt: {
+ * gte: new Date("2026-07-11T00:00:00Z"),
+ * lte: new Date("2026-07-11T23:59:59Z")
+ * }
+ * },
+ * data: { status: "UNAVAILABLE" }
+ * });
+ * Handling refunds correctly is a critical part of a creator platform like Topmate. Because creators are getting paid for their time, cancellations and refunds can be initiated by either the host (who suddenly can't make it) or the guest (depending on the host's cancellation policy).
+ * Here is how the data lifecycle changes and how your models handle a refund step-by-step.
+ * Step 1: The Trigger (Cancellation & Refund Request)
+ * Let's say Deependra has an emergency and needs to cancel the session with Sarah (Slot 502, Booking 9001). He clicks "Cancel and Refund" on his host dashboard.
+ * Your Express API receives the request and updates the bookings record first:
+ * await prisma.booking.update({
+ * where: { id: 9001 },
+ * data: {
+ * status: "CANCELLED",
+ * paymentStatus: "REFUNDED",
+ * cancelledAt: new Date()
+ * }
+ * });
+ * Step 2: The Asynchronous Payment Webhook (Stripe/Razorpay)
+ * Refunding money isn't instant; it has to go back through the banking network.
+ * Your backend makes an API call to your payment gateway: stripe.refunds.create({ charge: 'ch_3M...' }).
+ * Because this takes time, your gateway will process it asynchronously and fire a webhook to your server once it's done (e.g., charge.refunded).
+ * Your webhook handler listens for this event to verify that the money left the platform's escrow account and is headed back to Sarah's bank card.
+ * Step 3: What happens to the Slot inventory? (The Core Logic)
+ * Once a booking is refunded, what should happen to that pre-generated time slot? It depends entirely on who cancelled it and when:
+ * Scenario A: The Host Cancels (Deependra is busy)
+ * If Deependra cancels the meeting, it means he is no longer free at that time.
+ * The Database Action: The backend updates Slot 502 status from BOOKED to UNAVAILABLE (or simply deletes the row).
+ * The Result: The slot disappears from his public profile so no one else can book that hour either.
+ * Scenario B: The Guest Cancels Early (Sarah cancels 3 days before)
+ * If Sarah cancels well in advance and your platform policy allows a full refund, Deependra wants that hour back so someone else can buy it.
+ * The Database Action: The backend disconnects the cancelled booking from the slot and updates Slot 502 back to AVAILABLE:
+ * await prisma.slot.update({
+ * where: { id: 502 },
+ * data: { status: "AVAILABLE" }
+ * });
+ * The Result: The slot instantly goes back onto Deependra's inventory grid. Another visitor can now come along and book it.
+ * The Clean-Up Automations
+ * The moment the refund and cancellation are confirmed in the database, a background worker handles the remaining virtual items:
+ * Calendar Wiping: It reads the calendarEventId from the booking record and sends a delete command to Google/Outlook Calendar to remove the block from both Deependra's and Sarah's real-life calendars.
+ * Email Alerts: Sarah gets a notification: "Your session has been cancelled. A refund of $40 has been issued to your original payment method."
+ */
