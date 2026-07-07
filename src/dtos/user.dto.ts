@@ -8,6 +8,15 @@ export const createUserSchema = z.object({
     .max(50, "Name must be less than 50 characters"),
   email: z.email("Invalid email address"),
   password: z.string().min(6, "Password must be at least 6 characters long"),
+  slug: z
+    .string()
+    .min(1)
+    .max(100)
+    .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, {
+      message:
+        "Slug must contain only lowercase letters, numbers, and single hyphens, and cannot start or end with a hyphen",
+    })
+    .optional(),
 });
 
 export const updateUserSchema = z
@@ -21,6 +30,15 @@ export const updateUserSchema = z
     password: z
       .string()
       .min(6, "Password must be at least 6 characters long")
+      .optional(),
+    slug: z
+      .string()
+      .min(1)
+      .max(100)
+      .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, {
+        message:
+          "Slug must contain only lowercase letters, numbers, and single hyphens, and cannot start or end with a hyphen",
+      })
       .optional(),
   })
   .refine((data) => data.name !== undefined || data.email !== undefined, {

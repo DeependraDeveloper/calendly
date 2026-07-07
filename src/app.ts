@@ -8,6 +8,7 @@ import { routeNotFound } from "./middlewares/route-handler.js";
 import userRouter from "./routes/user.router.js";
 import eventTypeRouter from "./routes/event-type.router.js";
 import publicEventRouter  from "./routes/public-event.router.js";
+import availabilityRouter from "./routes/availability.router.js";
 
 app.use("/health", (_req, res) => {
   res.json({
@@ -24,6 +25,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/api/v1/users", userRouter);
 app.use('/api/v1/event-types', eventTypeRouter);
 app.use('/api/v1/public', publicEventRouter);
+app.use('/api/availability', availabilityRouter);
 
 // route  middleware
 app.use(routeNotFound);

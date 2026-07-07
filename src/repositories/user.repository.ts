@@ -16,6 +16,15 @@ export const findOne = async (id: number) => {
   return data;
 };
 
+export const findBySlug = async (slug: string) => {
+  let data = await prisma.user.findUnique({
+    where: {
+     slug
+    },
+  });
+  return data;
+};
+
 export const findByEmail = async (email: string) => {
   let data = await prisma.user.findUnique({
     where: {
@@ -26,6 +35,9 @@ export const findByEmail = async (email: string) => {
 };
 
 export const insert = async (userData: CreateUserDto) => {
+
+
+
   const data = await prisma.user.create({
     data: userData,
   });

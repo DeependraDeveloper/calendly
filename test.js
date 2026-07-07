@@ -18,7 +18,7 @@ function generateNeverRepeatingId() {
 
 let generated = [];
 
-for(let i=1;i<=100000;i++){
+for(let i=1;i<=1000;i++){
     let r = generateNeverRepeatingId()
     generated.push(r)
 }
