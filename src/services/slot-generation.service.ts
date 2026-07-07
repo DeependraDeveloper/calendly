@@ -1,47 +1,69 @@
 import { DateTime, Interval } from "luxon";
+import { TimeWindow } from "../utilities/interface.js";
+import { parseTimeOnDate } from "../utilities/helper.js";
 
-export interface TimeWindow {
-  start: DateTime;
-  end: DateTime;
-}
-
-/*
- *
- * Given the time and date we will return absolute DateTime object in Host's timezone
- *
- * Input:
- * time = "09:30"
- * date = "2026-01-01"
- * timezone = "UTC"
- *
- * Output:
- * DateTime = "2026-01-01T09:30:00.000Z"
- */
-
-export function parseTimeOnDate(
-  date: DateTime,
-  time: String,
-  timeZone: string,
-) {
-  const [hour, minute] = time.split(":").map(Number);
-
-  return date.setZone(timeZone).set({
-    hour,
-    minute,
-    second: 0,
-    millisecond: 0,
-  });
-}
 
 /*
  * Combine the overlapping intervals into a single interval | merge interval
  * [ {09:00, 12:00} , { 11:00, 14:00 } ] => [ {09:00, 14:00} ]
  * [ {09:00, 12:00} , { 14:00, 17:00 } ] => [ {09:00, 12:00} , { 14:00, 17:00 } ]
- */
+ 
+   function mergerIntervals ( intervals ) {
+     if(intervals.length <= 1) return intervals;
+     intervals.sort((a,b)=>a[0]-b[0]);
+
+     const merged = [intervals[0]];
+
+     for(let i=1;i<intervals;i++){
+       let current = intervals[i];
+       let lastMerged = merges[merged.length-1];
+       current[0] <= lastMerged[1] ? lastMerged[1] = Math.max(lastMerged[1],current[1]) : merged.push(current)
+     }
+
+     return merged;
+   }
+
+   
+*  Base date anchor (Using July 7, 2026 as today)
+const baseDate = DateTime.fromISO("2026-07-07", { zone: "utc" });
+
+* The Input Array (Simulating overlapping host availability)
+const perfectInput: TimeWindow[] = [
+  {
+    // Slot A: 09:00 AM to 12:00 PM
+    start: baseDate.set({ hour: 9, minute: 0, second: 0, millisecond: 0 }),
+    end: baseDate.set({ hour: 12, minute: 0, second: 0, millisecond: 0 })
+  },
+  {
+    // Slot B: 11:00 AM to 02:00 PM (Overlaps with Slot A)
+    start: baseDate.set({ hour: 11, minute: 0, second: 0, millisecond: 0 }),
+    end: baseDate.set({ hour: 14, minute: 0, second: 0, millisecond: 0 })
+  },
+  {
+    // Slot C: 04:00 PM to 06:00 PM (Standalone Clean Gap)
+    start: baseDate.set({ hour: 16, minute: 0, second: 0, millisecond: 0 }),
+    end: baseDate.set({ hour: 18, minute: 0, second: 0, millisecond: 0 })
+  }
+];
+
+* Ouput
+ [
+  {
+    start: DateTime { ts: 2026-07-07T09:00:00.000Z, zone: UTC, locale: en-IN },
+    end: DateTime { ts: 2026-07-07T14:00:00.000Z, zone: UTC, locale: en-IN }
+  },
+  {
+    start: DateTime { ts: 2026-07-07T16:00:00.000Z, zone: UTC, locale: en-IN },
+    end: DateTime { ts: 2026-07-07T18:00:00.000Z, zone: UTC, locale: en-IN }
+  }
+]
+
+*/
 
 export function mergeWindows(windows: TimeWindow[]): TimeWindow[] {
   if (windows.length === 0) return [];
 
+  // creates a shallow copy of your array so we don't accidentally mutate or mess up your original data source.
   const sorted = [...windows].sort(
     (a, b) => a.start.toMillis() - b.start.toMillis(),
   );

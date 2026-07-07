@@ -4,13 +4,9 @@ import { SLOT_GENERATION_DAYS } from "../config/env.js";
 import { findActiveRulesByUser, findExceptionsByUserInRange } from "../repositories/availability.repository.js";
 import { findActiveEventTypesByHost } from "../repositories/event-type.repository.js";
 import { findBookedSlotsByHostInRange } from "../repositories/slot.reposiotry.js";
-import { applyExceptionsForDate, overlapsBooked, splitIntoSlots, TimeWindow, windowsForWeekdayRule } from "./slot-generation.service.js";
+import { applyExceptionsForDate, overlapsBooked, splitIntoSlots, windowsForWeekdayRule } from "./slot-generation.service.js";
+import { RegenerateHostSlotsInput, TimeWindow } from "../utilities/interface.js";
 
-export interface RegenerateHostSlotsInput {
-    hostId: number;
-    from?: string; // YYYY-MM-DD
-    to?: string; // YYYY-MM-DD
-}
 
 export async function regenerateHostSlots(input: RegenerateHostSlotsInput) {
     const host = await prisma.user.findUnique({ where: { id: input.hostId } });
