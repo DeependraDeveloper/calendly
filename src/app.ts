@@ -26,8 +26,8 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/api/v1/users", userRouter);
 app.use('/api/v1/event-types', eventTypeRouter);
 app.use('/api/v1/public', publicEventRouter);
-app.use('/api/availability', availabilityRouter);
-app.use('/api/bookings', bookingRouter);
+app.use('/api/v1/availability', availabilityRouter);
+app.use('/api/v1/bookings', bookingRouter);
 
 // route  middleware
 app.use(routeNotFound);

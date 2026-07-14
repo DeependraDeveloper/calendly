@@ -13,7 +13,14 @@ import {
   update,
 } from "../repositories/event-type.repository.js";
 import { findOne } from "../repositories/user.repository.js";
-import { badRequest, conflict, forbidden, notFound } from "../utilities/api-error.js";
+import {
+  badRequest,
+  conflict,
+  forbidden,
+  notFound,
+} from "../utilities/api-error.js";
+import { listRules } from "./avialable.service.js";
+import { startRegenerateHostSlotsWorkflow } from "../temporal/client.js";
 
 export const findEventTypesByHostId = async (hostId: number) => {
   const isHostExist = await findOne(hostId);
@@ -31,6 +38,9 @@ export const addEventType = async (
   const isHostExist = await findOne(hostId);
   if (!isHostExist) throw conflict("Host not found");
 
+  const isAvailabiltyRulesExist = await listRules(hostId);
+  if (!isAvailabiltyRulesExist) throw conflict("No availabilty rules exists");
+
   const slugInput =
     eventDetials.slug ?? slug(eventDetials.title, { lower: true });
 
@@ -42,10 +52,16 @@ export const addEventType = async (
       "A event type with this slug already exists , please use a fifferent slug",
     );
 
-  return insert(hostId, {
+  const eventType = insert(hostId, {
     ...eventDetials,
     slug: slugInput,
   });
+
+  await startRegenerateHostSlotsWorkflow({
+    hostId,
+  });
+
+  return eventType;
 };
 
 export const modifyEventType = async (
@@ -92,9 +108,8 @@ export const getEventTypeById = async (id: number, hostId: number) => {
 };
 
 export const getEventTypePublic = async (hostId: number, eventSlug: string) => {
-
-  if(!hostId) throw badRequest("Host is required");
-  if(!eventSlug) throw badRequest("slug is required");
+  if (!hostId) throw badRequest("Host is required");
+  if (!eventSlug) throw badRequest("slug is required");
 
   const isHostExist = await findOne(hostId);
   if (!isHostExist) throw conflict("Host not found");
