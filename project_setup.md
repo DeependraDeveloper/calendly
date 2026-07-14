@@ -260,3 +260,6 @@ This captures emails sent by your application (like confirmation emails). You ca
   - workers
 
 # Run docker container - docker compose up -d
+
+# As worker are different process other then our server
+   "dev:worker": "nodemon --watch src --ext ts --exec 'tsx src/temporal/worker.ts'",
