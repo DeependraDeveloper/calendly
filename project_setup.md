@@ -203,8 +203,46 @@ export [per terminal session]
   advantages
     - Seo
     - human readly
-    -  security
+    - security
 
 # load testing tool Grafana k6 | bombardier
 
 # STORE TIMES IN UTC - THEN CONVERT IN CLIENT SIDE REPSECTIVE TIMEZONES
+
+
+# SETUP TEMPORAL and TEMPORAL UI
+ - inside docker container we will be running a temporal instance
+ - As temporal manages state , whatever worker or taks are running they have there own state and durable and retry , so it depends on d/f db's
+ - we have any db of choice but here we will use pgsql as it is to store its state
+ - pg sql is runnig locally in our machine or on seperate container
+ - Temporal will depend on pggsql
+ - and ui will depend on temporal main server
+
+
+1. temporal (The Core Engine)
+"image": temporalio/auto-setup: This is an all-in-one image that automatically connects to your database, creates the required schemas (temporal and temporal_visibility), and boots the Temporal cluster services (Frontend, History, Matching, Worker).
+
+"extra_hosts": ["host.docker.internal:host-gateway"]: This tells the Temporal container how to find your actual host machine (your physical Windows OS).
+
+"POSTGRES_SEEDS": host.docker.internal: Temporal uses this variable to know where the database lives. Right now, it's correctly aimed at your physical machine instead of inside Docker.
+
+"ports": ["7233:7233"]: This exposes Temporal's default gRPC port. Your Node.js/TypeScript code will use this port to communicate with Temporal.
+
+2. temporal-ui (The Dashboard)
+"TEMPORAL_ADDRESS": temporal:7233: It connects internally across the Docker network to the temporal container.
+
+"ports": ["8080:8080"]: You can visit http://localhost:8080 in your web browser to visually see your workflows, track errors, and debug failures.
+
+3. mailhog (Fake SMTP Server)
+This captures emails sent by your application (like confirmation emails). You can view them in a fake inbox at http://localhost:8025 without actually spamming real email addresses.
+
+
+# CORS (CROSS ORIGIN REQUEST) - Browser level security
+  * strict-origin-when-cross-origin
+  - browser --- server
+  - abc.com --- xyz.com [different origin/domains]
+  - before main req , browser will send pre-flight req , tries and check whether the other origin is aware of incoming req from this origin/cleint after success return the main req goes , thus protects from malicious orgin
+  - origin-a.com --- > origin-b.com [sends req header - 'Origin:https://origin-a.com']
+  - origin-b.com --- > origin-a.com [send res headers - 'Access-Control-Allow-Origin:https://origin-a.com']
+  - simple req - [get , post] - No check only for [put , patch or delete] - checks happens
+

@@ -1,0 +1,6 @@
+limit.maxIDLength:
+  - value: 255
+    constraints: {}
+
+# Extra config file for temporal to tell its database to make a id length < 255
+# which will be passed in docker-compose.yml
