@@ -1,49 +1,34 @@
-import { TEMPORAL_ENABLED, TEMPORAL_TASK_QUEUE } from "../config/env.js";
-import { getTemporalClient } from "../config/temporal.js";
-import { RegenerateHostSlotsInput } from "../services/slot.service.js";
+import { NativeConnection, Worker } from "@temporalio/worker";
+import {
+  TEMPORAL_ADDRESS,
+  TEMPORAL_NAMESPACE,
+  TEMPORAL_TASK_QUEUE,
+} from "../config/env.js";
+import * as activities from "./activities/index.js";
+import { fileURLToPath } from "node:url";
 
-async function startWorkflow(
-    workflowName: string,
-    workflowId: string,
-    args: unknown[]
-) {
+async function run() {
+  const connection = await NativeConnection.connect({
+    address: TEMPORAL_ADDRESS,
+  });
 
-    if(!TEMPORAL_ENABLED) {
-        console.warn('[temporal] Temporal is not enabled, skipping workflow start');
-        return null;
-    }
+  const worker = await Worker.create({
+    connection,
+    namespace: TEMPORAL_NAMESPACE,
+    taskQueue: TEMPORAL_TASK_QUEUE,
+    activities,
+    workflowsPath: fileURLToPath(
+      new URL("./workflows/index.ts", import.meta.url),
+    ),
+  });
 
-    try {
-        const client = await Promise.race([
-            getTemporalClient(),
-            new Promise<never>((_, reject) => setTimeout(() => reject(new Error('Temporal client connection timeout')), 5000)),
-        ]);
-
-        const handle = await client.workflow.start(workflowName, {
-            taskQueue: TEMPORAL_TASK_QUEUE,
-            workflowId,
-            args,
-        });
-
-        return handle.workflowId;
-    } catch (err) {
-        console.error(`[temporal] Error starting workflow: ${workflowName} with id: ${workflowId}, error: ${err}`);
-        return null;
-    }
+  console.log(
+    `[temporal] Worker started for task queue: ${TEMPORAL_TASK_QUEUE}`,
+  );
+  await worker.run();
 }
 
-export async function startRegenerateHostSlotsWorkflow(input: RegenerateHostSlotsInput) { // async
-    return startWorkflow(
-        'regenerateHostSlotsWorkflow',
-        `regenerate-host-slots-${input.hostId}-${Date.now()}`,
-        [input]
-    )
-}
-
-export async function startSendBookingConfirmationEmailWorkflow(bookingId: number) {
-    return startWorkflow(
-        'sendBookingConfirmationEmailWorkflow',
-        `send-booking-confirmation-email-${bookingId}-${Date.now()}`,
-        [bookingId]
-    )
-}
+run().catch((err) => {
+  console.error("[temporal] Error starting worker", err);
+  process.exit(1);
+});

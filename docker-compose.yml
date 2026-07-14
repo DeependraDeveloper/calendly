@@ -13,7 +13,7 @@ services:
     ports:
       - "7233:7233"
     volumes:
-      - ./src/temporal/dynamicConfig:/etc/temporal/config/dynamicconfig
+      - ./temporal/dynamicConfig:/etc/temporal/config/dynamicconfig
 
   temporal-ui:
     image: temporalio/ui:2.31.2 

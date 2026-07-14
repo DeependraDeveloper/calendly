@@ -248,4 +248,15 @@ This captures emails sent by your application (like confirmation emails). You ca
 
 
 
+# At root
+  - Temporal/dynamicConfig/development-sql.yaml
+  - for extra temporal config and pass it in docker compose 
+
+# In config make a temporal client
+
+# In src/temporal
+  - workflows
+  - activities
+  - workers
+
 # Run docker container - docker compose up -d

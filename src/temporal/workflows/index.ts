@@ -1,6 +1,6 @@
 export {
     regenerateHostSlotsWorkflow,
-} from "./slot-generation.workflow.js";
+} from "./slot-generation.wokflow.js";
 
 export {
     sendBookingConfirmationEmailWorkflow,

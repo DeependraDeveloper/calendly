@@ -1,6 +1,6 @@
-import { TEMPORAL_ENABLED, TEMPORAL_TASK_QUEUE } from "../config/env.js";
-import { getTemporalClient } from "../config/temporal.js";
-import { RegenerateHostSlotsInput } from "../services/slot.service.js";
+import { TEMPORAL_TASK_QUEUE } from "../config/env.js";
+import { getTemporalClient, getTemporalEnabled } from "../config/temporal.js";
+import { RegenerateHostSlotsInput } from "../utilities/interface.js";
 
 async function startWorkflow(
     workflowName: string,
@@ -8,7 +8,7 @@ async function startWorkflow(
     args: unknown[]
 ) {
 
-    if(!TEMPORAL_ENABLED) {
+    if(!getTemporalEnabled()) {
         console.warn('[temporal] Temporal is not enabled, skipping workflow start');
         return null;
     }
@@ -19,7 +19,7 @@ async function startWorkflow(
             new Promise<never>((_, reject) => setTimeout(() => reject(new Error('Temporal client connection timeout')), 5000)),
         ]);
 
-        const handle = await client.workflow.start(workflowName, {
+        const handle = await client!.workflow.start(workflowName, {
             taskQueue: TEMPORAL_TASK_QUEUE,
             workflowId,
             args,

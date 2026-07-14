@@ -5,13 +5,8 @@ import { findActiveEventTypesByHost } from "../repositories/event-type.repositor
 import { blockSlot, findBookedSlotsByHostInRange, findFutureSlotsByEventTypeInRange, upsertAvailableSlot } from "../repositories/slot.reposiotry.js";
 import { findOne as getUserById } from "../repositories/user.repository.js";
 import { applyExceptionsForDate, overlapsBooked, splitIntoSlots, windowsForWeekdayRule } from "./slot-generation.service.js";
-import { TimeWindow } from "../utilities/interface.js";
+import { RegenerateHostSlotsInput, TimeWindow } from "../utilities/interface.js";
 
-export interface RegenerateHostSlotsInput {
-    hostId: number;
-    from?: string; // YYYY-MM-DD
-    to?: string; // YYYY-MM-DD
-}
 
 export async function regenerateHostSlots(input: RegenerateHostSlotsInput) {
     const host = await getUserById(input.hostId);
