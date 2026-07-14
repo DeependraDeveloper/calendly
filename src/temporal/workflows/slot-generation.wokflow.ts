@@ -3,10 +3,13 @@ import { proxyActivities } from "@temporalio/workflow";
 import type * as activities from "../activities/index.js";
 import { RegenerateHostSlotsInput } from "../../utilities/interface.js";
 
+
+// here we can also add specific task queue to seperate the concerns
 // Create the proxy activites type safety from activities 
 const { regenerateHostSlotsActivity } = proxyActivities<typeof activities>({
     retry: { maximumAttempts: 3},
     startToCloseTimeout: '10 minutes',
+    // taskQueue : "slot"
 })
 
 

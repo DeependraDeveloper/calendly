@@ -2,6 +2,8 @@ import { TEMPORAL_TASK_QUEUE } from "../config/env.js";
 import { getTemporalClient, getTemporalEnabled } from "../config/temporal.js";
 import { RegenerateHostSlotsInput } from "../utilities/interface.js";
 
+
+// general function to start a workflow
 async function startWorkflow(
     workflowName: string,
     workflowId: string,
@@ -19,7 +21,9 @@ async function startWorkflow(
             new Promise<never>((_, reject) => setTimeout(() => reject(new Error('Temporal client connection timeout')), 5000)),
         ]);
 
-        const handle = await client!.workflow.start(workflowName, {
+        if(!client) return null;
+
+        const handle = await client.workflow.start(workflowName, {
             taskQueue: TEMPORAL_TASK_QUEUE,
             workflowId,
             args,
@@ -31,6 +35,7 @@ async function startWorkflow(
         return null;
     }
 }
+
 
 export async function startRegenerateHostSlotsWorkflow(input: RegenerateHostSlotsInput) { // async
     return startWorkflow(
