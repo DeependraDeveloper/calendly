@@ -246,3 +246,6 @@ This captures emails sent by your application (like confirmation emails). You ca
   - origin-b.com --- > origin-a.com [send res headers - 'Access-Control-Allow-Origin:https://origin-a.com']
   - simple req - [get , post] - No check only for [put , patch or delete] - checks happens
 
+
+
+# Run docker container - docker compose up -d
