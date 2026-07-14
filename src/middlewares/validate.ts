@@ -15,3 +15,17 @@ export const validate =
     req.body = result.data; // Assign the validated data back to req.body
     next();
   };
+
+
+
+export const validateQuery = (schema:ZodSchema) => (req:Request,_res:Response,next:NextFunction) => {
+  const result = schema.safeParse(req.query);
+
+   if (!result.success)
+      throw badRequest("Validation failed", result.error.issues);
+
+   req.query = result.data as Request['query'];
+   next();
+   
+
+}

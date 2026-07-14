@@ -9,6 +9,7 @@ import userRouter from "./routes/user.router.js";
 import eventTypeRouter from "./routes/event-type.router.js";
 import publicEventRouter  from "./routes/public-event.router.js";
 import availabilityRouter from "./routes/availability.router.js";
+import bookingRouter from "./routes/booking.router.js";
 
 app.use("/health", (_req, res) => {
   res.json({
@@ -26,6 +27,7 @@ app.use("/api/v1/users", userRouter);
 app.use('/api/v1/event-types', eventTypeRouter);
 app.use('/api/v1/public', publicEventRouter);
 app.use('/api/availability', availabilityRouter);
+app.use('/api/bookings', bookingRouter);
 
 // route  middleware
 app.use(routeNotFound);
