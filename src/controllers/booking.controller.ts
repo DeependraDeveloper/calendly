@@ -5,7 +5,7 @@ import {
     createBookingPessimistically,
     listHostBookings as listHostBookingsService,
 } from "../services/booking.service.js";
-import { sendSuccess } from "../utils/api-response.js";
+import { sendSuccess } from "../utilities/api-response.js";
 
 export async function create(req: Request, res: Response) {
     const result = await createBookingPessimistically(req.userId, req.body);
