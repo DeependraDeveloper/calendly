@@ -159,7 +159,7 @@ export async function createCalendarEvent(bookingId: number) {
     throw new Error("Failed to create Google Calendar event");
 
   return {
-    meetLink,
+    meetingLink : meetLink,
     calendarEventId: event.data.id,
   };
 }

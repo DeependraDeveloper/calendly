@@ -247,7 +247,6 @@ This captures emails sent by your application (like confirmation emails). You ca
   - simple req - [get , post] - No check only for [put , patch or delete] - checks happens
 
 
-
 # At root
   - Temporal/dynamicConfig/development-sql.yaml
   - for extra temporal config and pass it in docker compose 
@@ -258,6 +257,10 @@ This captures emails sent by your application (like confirmation emails). You ca
   - workflows
   - activities
   - workers
+
+# Confirmation email on mail hog or use gmail 
+# CALENDAR direct meeting event scheduleed
+
 
 # Run docker container - docker compose up -d
 

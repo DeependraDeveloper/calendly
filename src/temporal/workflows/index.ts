@@ -1,7 +1,5 @@
-export {
-    regenerateHostSlotsWorkflow,
-} from "./slot-generation.wokflow.js";
+export { regenerateHostSlotsWorkflow } from "./slot-generation.wokflow.js";
 
-export {
-    sendBookingConfirmationEmailWorkflow,
-} from "./booking-notification.workflow.js";
+export { sendBookingConfirmationEmailWorkflow } from "./booking-notification.workflow.js";
+
+export { createGoogleCalendarEventWorkflow } from "./google-calendar.worklow.js";

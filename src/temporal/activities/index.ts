@@ -24,7 +24,7 @@ export async function createGoogleCalendarEventActivity(bookingId: number) {
     const result = await createCalendarEvent(bookingId);
 
     await updateBookingCalendarDetails(bookingId, {
-        meetLink: result.meetLink,
+        meetingLink: result.meetingLink,
         calendarEventId: result.calendarEventId,
     });
 }

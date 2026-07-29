@@ -70,7 +70,7 @@ export async function findBookingById(bookingId: number) {
 
 export async function updateBookingCalendarDetails(
     bookingId: number,
-    data: { meetLink: string; calendarEventId: string },
+    data: { meetingLink: string; calendarEventId: string },
     db?: DbClient
 ) {
     const client = getDbClient(db);
