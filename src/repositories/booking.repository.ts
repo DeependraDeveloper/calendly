@@ -4,9 +4,6 @@ import { CreateBookingData, ListHostBookingsFilters } from "../utilities/interfa
 import {getDbClient, type DbClient} from "./db-client.js";
 
 
-
-
-
 export async function createBooking(data:CreateBookingData , db?: DbClient){
     const client = getDbClient(db);
 
@@ -67,5 +64,19 @@ export async function findBookingById(bookingId: number) {
             eventType: true,
             host: true,
         },
+    });
+}
+
+
+export async function updateBookingCalendarDetails(
+    bookingId: number,
+    data: { meetLink: string; calendarEventId: string },
+    db?: DbClient
+) {
+    const client = getDbClient(db);
+
+    return client.booking.update({
+        where: { id: bookingId },
+        data,
     });
 }
