@@ -9,9 +9,6 @@ async function startWorkflow(
     workflowId: string,
     args: unknown[]
 ) {
-
-    // console.log(await getTemporalClient(),"temporal")
-
     // if(!await getTemporalEnabled()) {
     //     console.warn('[temporal] Temporal is not enabled, skipping workflow start');
     //     return null;
@@ -23,7 +20,9 @@ async function startWorkflow(
             new Promise<never>((_, reject) => setTimeout(() => reject(new Error('Temporal client connection timeout')), 5000)),
         ]);
 
-        const handle = await client!.workflow.start(workflowName, {
+        if(!client) return;
+
+        const handle = await client.workflow.start(workflowName, {
             taskQueue: TEMPORAL_TASK_QUEUE,
             workflowId,
             args,

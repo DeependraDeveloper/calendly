@@ -198,4 +198,34 @@ router [routing req] - controller [http logic] - service [businees logic]-  repo
 
 - Single Responsible principle
   [ S O L I D] fundamentals
-  
+
+
+/*
+
+User 
+  - name
+  - email
+  - linkedIn
+  - topmate page name / slug
+  - fee
+  - expertise
+  - phone
+
+Availiblties rules & exception
+  - weekday [1-7 (mon - sun)]
+  - start time and end time  [ full day | partial ]
+
+
+
+Services / event types
+  - resume review | interview prep etc
+
+
+bookings
+
+email / whataspp confirmation
+
+
+
+
+*/
