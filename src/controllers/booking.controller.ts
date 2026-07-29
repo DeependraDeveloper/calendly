@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { ListHostBookingsQuery } from "../dtos/booking.dto.js";
 import {
-    createBookingOptimistically,
+    // createBookingOptimistically,
     createBookingPessimistically,
     listHostBookings as listHostBookingsService,
 } from "../services/booking.service.js";

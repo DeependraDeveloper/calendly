@@ -1,5 +1,5 @@
 import { TEMPORAL_TASK_QUEUE } from "../config/env.js";
-import { getTemporalClient, getTemporalEnabled } from "../config/temporal.js";
+import { getTemporalClient } from "../config/temporal.js";
 import { RegenerateHostSlotsInput } from "../utilities/interface.js";
 
 

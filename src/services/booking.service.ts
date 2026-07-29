@@ -11,7 +11,6 @@ import {
 import { badRequest, notFound } from "../utilities/api-error.js";
 import type {  Slot } from "../../generated/prisma/client.js";
 import {startCreateGoogleCalendarEventWorkflow,startRegenerateHostSlotsWorkflow, startSendBookingConfirmationEmailWorkflow } from "../temporal/client.js";
-import { sendBookingConfirmationEmailWorkflow } from "../temporal/workflows/booking-notification.workflow.js";
 
 
 /**
