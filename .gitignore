@@ -3,3 +3,4 @@ package-lock.json
 .env
 dist
 /generated/prisma
+k8s/secret.yaml
